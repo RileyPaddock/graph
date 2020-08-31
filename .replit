@@ -1,2 +1,2 @@
-run = "python analysis/test_railroad_travel_time.py"
+run = "python src/graph.py"
 language = "python3"

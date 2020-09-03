@@ -1,2 +1,2 @@
-run = "python src/graph.py"
+run = "python tests/test_graph.py"
 language = "python3"

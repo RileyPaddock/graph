@@ -3,6 +3,7 @@ class Node:
         self.index = index
         self.value = None
         self.neighbors = []
+        self.previous = None
 
     def set_value(self,new_value):
         self.value = new_value

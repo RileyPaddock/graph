@@ -35,13 +35,11 @@ class Graph:
                 queue.remove(queue[0])
         return result
 
-    def find_distance(self,i,j):
+    def calc_distance(self,i,j):
         result = []
         queue = [i]
         generation = 0
-        while len(result) < len(self.nodes):
-            if self.nodes[j].index in queue:
-                return generation
+        while self.nodes[j].index not in queue:
             static_len = len(queue)
             for i in range(static_len):
                 for neighbor in self.nodes[queue[0]].neighbors:
@@ -50,21 +48,30 @@ class Graph:
                     result.append(queue[0])
                 queue.remove(queue[0])
             generation += 1
+        return generation
+
+    def calc_shortest_path(self,start, end):
+        self.nodes[start].previous = "done"
+        result = [end]
+        queue = [start]
+        while end not in queue:
+            for neighbor in self.nodes[queue[0]].neighbors:
+                if self.nodes[neighbor.index].previous is None:
+                    self.nodes[neighbor.index].previous = queue[0]
+                queue.append(neighbor.index)
+            queue.remove(queue[0])
+
+        active_node = self.nodes[end]
+        while active_node.previous != "done":
+            result.append(active_node.previous)
+            active_node = self.nodes[active_node.previous]
+
+        result.reverse()
+        for node in self.nodes:
+            node.previous = None
+        return result
 
 
-edges = [(0,1),(1,2),(1,3),(3,4),(1,4),(4,5)]
-vertices = ['a','b','c','d','e','f']
-graph = Graph(edges,vertices)
 
-print(graph.find_distance(0,4))
-#2
-print(graph.find_distance(5,2))
-#3
-print(graph.find_distance(0,5))
-#3
-print(graph.find_distance(4,1))
-#1
-print(graph.find_distance(3,3))
-#0
 
     

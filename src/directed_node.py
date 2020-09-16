@@ -1,4 +1,4 @@
-class Node:
+class Directed_Node:
     def __init__(self,index):
         self.index = index
         self.value = None

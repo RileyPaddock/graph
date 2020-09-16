@@ -1,4 +1,4 @@
-from directed_node import Node
+from directed_node import DirectedNode
 
 class DirectedGraph:
     def __init__(self, edges, verticies = None):
@@ -14,7 +14,7 @@ class DirectedGraph:
             if y not in edge_indicies:
                 edge_indicies.append(y)
         for i in edge_indicies:
-            self.nodes.append(Node(i))
+            self.nodes.append(DirectedNode(i))
         for x,y in self.edges:
             self.nodes[x].children.append(self.nodes[y])
             self.nodes[y].parents.append(self.nodes[x])
@@ -62,13 +62,3 @@ class DirectedGraph:
             for node in self.nodes:
                 node.previous = None
             return result
-
-    
-
-vertices = [0, 1, 2, 3, 4, 5, 6]
-
-# 0-->1-->2
-#     ^ \
-#     |  v
-# 6<--3<--4-->5
-

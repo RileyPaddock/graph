@@ -1,2 +1,2 @@
-run = "python tests/test_directed_graph.py"
+run = "python src/weighted_graph.py"
 language = "python3"

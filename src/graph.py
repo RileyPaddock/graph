@@ -2,17 +2,20 @@ import sys
 sys.path.append('src')
 from node import Node
 class Graph:
-    def __init__(self, edges, verticies):
+    def __init__(self, edges, vertices):
         self.edges = edges
-        self.verticies = verticies
-        self.nodes = [Node(i) for i in range(len(verticies))]
+        self.vertices = vertices
+        self.nodes = [Node(i) for i in list(set([x for x,y in edges]+[y for x,y in edges]))]
+        self.unique_indices = list(set([x for x,y in self.edges]+[y for x,y in self.edges]))
+        self.correct_indices = [x for x in range(len(self.unique_indices))]
         self.set_up_nodes()
 
     def set_up_nodes(self):
-        for i in range(len(self.nodes)):
-            self.nodes[i].set_value(self.verticies[i])
+        
+        for i in list(set([x for x,y in self.edges]+[y for x,y in self.edges])):
+            self.nodes[self.correct_indices[self.unique_indices.index(i)]].value = self.vertices[i]
         for x,y in self.edges:
-            self.nodes[x].set_neighbor(self.nodes[y])
+            self.nodes[self.correct_indices[self.unique_indices.index(x)]].neighbors.append(self.nodes[self.correct_indices[self.unique_indices.index(y)]])
 
     def depth_first_search(self,starting_index):
         result = [starting_index]
@@ -51,19 +54,19 @@ class Graph:
         return generation
 
     def calc_shortest_path(self,start, end):
-        self.nodes[start].previous = "done"
+        self.nodes[self.correct_indices[self.unique_indices.index(start)]].previous = "done"
         result = [end]
-        queue = [start]
+        queue = [self.correct_indices[self.unique_indices.index(start)]]
         while end not in queue:
             for neighbor in self.nodes[queue[0]].neighbors:
-                if self.nodes[neighbor.index].previous is None:
-                    self.nodes[neighbor.index].previous = queue[0]
+                if self.nodes[self.correct_indices[self.unique_indices.index(neighbor.index)]].previous is None:
+                    self.nodes[self.correct_indices[self.unique_indices.index(neighbor.index)]].previous = queue[0]
                 queue.append(neighbor.index)
             queue.remove(queue[0])
 
-        active_node = self.nodes[end]
+        active_node = self.nodes[self.correct_indices[self.unique_indices.index(end)]]
         while active_node.previous != "done":
-            result.append(active_node.previous)
+            result.append(self.unique_indices[active_node.previous])
             active_node = self.nodes[active_node.previous]
 
         result.reverse()

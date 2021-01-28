@@ -1,6 +1,8 @@
+from graph import Graph
 class WeightedGraph:
-    def __init__(self, weights):
+    def __init__(self, weights, vertices):
         self.weights = weights
+        self.vertices = vertices
         self.dvalues = {x:99999 for x in list(set([x for x,y in self.weights]+[y for x,y in self.weights]))}
 
 
@@ -38,15 +40,32 @@ class WeightedGraph:
         
     def calc_shortest_path(self, start, end):
         self.calc_dvalues(start, [], [], True)
-        current = start
-        path = [start]
-        while current != end:
-            neighbors = [y for x,y in self.weights if x == current and y not in path]+[x for x,y in self.weights if y == current and x not in path]
-            dvalues = [self.dvalues[x] for x in neighbors]
-            best_move = neighbors[dvalues.index(min(dvalues))]
-            path.append(best_move)
-            current = best_move
-        return path
+        shortest_path_graph = self.build_shortest_path_graph(start, end)
+        return shortest_path_graph.calc_shortest_path(start, end)
+
+    def build_shortest_path_graph(self,start, end):
+        edges = []
+        active = start
+        queue = [start]
+
+        while active != end:
+            connections = [(x,y) for x,y in self.weights if x == active]+[(x,y) for x,y in self.weights if y == active]
+            for connection in connections:
+                if active == connection[0]:
+                    if self.dvalues[active] + self.weights[(active,connection[1])] == self.dvalues[connection[1]]:
+                        edges.append((active,connection[1])) 
+                        queue.append(connection[1])
+                else:
+                    if self.dvalues[active]+self.weights[(connection[0], active)] == self.dvalues[connection[0]]:
+                        edges.append((connection[0], active))
+                        queue.append(connection[0])
+            del queue[0]
+            active = queue[0]
+
+        return Graph(edges, self.vertices)
+            
+    
+
 
 
 weights = {
@@ -61,15 +80,19 @@ weights = {
     (4,8): 8,
     (8,0): 4
 }
+vertex_values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
+weighted_graph = WeightedGraph(weights, vertex_values)
 
-weighted_graph = WeightedGraph(weights)
-shortest_path = weighted_graph.calc_shortest_path(8,4)
-print(shortest_path)
-#[8, 0, 3, 4]
+print("Testing Shortest Path")
+assert weighted_graph.calc_shortest_path(8,4) == [8, 0, 3, 4]
 
+assert weighted_graph.calc_shortest_path(8,7) == [8, 0, 1, 7]
 
-print(weighted_graph.calc_distance(8,4))
-#7
+assert weighted_graph.calc_shortest_path(8,6) == [8, 0, 3, 2, 5, 6]
+print("     passed")
 
-print([weighted_graph.calc_distance(8,n) for n in range(9)])
-#[4, 7, 12, 6, 7, 13, 21, 11, 0]
+print("\nTesting distance")
+assert weighted_graph.calc_distance(8,4) == 7
+
+assert [weighted_graph.calc_distance(8,n) for n in range(9)] == [4, 7, 12, 6, 7, 13, 21, 11, 0]
+print("     passed")

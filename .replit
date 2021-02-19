@@ -1,2 +1,2 @@
-run = "python src/weighted_graph.py"
+run = "python src/neural_network.py"
 language = "python3"

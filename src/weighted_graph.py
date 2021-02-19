@@ -2,7 +2,7 @@ from graph import Graph
 class WeightedGraph:
     def __init__(self, weights, vertices):
         self.weights = weights
-        self.vertices = vertices
+        self.vertices = {i:vertices[i] for i in range(len(vertices))}
         self.dvalues = {x:99999 for x in list(set([x for x,y in self.weights]+[y for x,y in self.weights]))}
 
 
